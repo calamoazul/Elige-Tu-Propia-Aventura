@@ -55,7 +55,20 @@ class Boiler_Room:
         if(option == 'A'):
            self.fight_with_reptilian()
         elif(option == 'B'):
-            self.fight_with_slug()
+            print("""Parecía que llamabas la atención por tus heridas, pero en ese lugar todos tienen cicatrices por la dura tarea de la que se encargan. Hay infinidad de aliens con quemaduras, cortes, algún miembro aplastado...\n
+                      \rSe acerca la hora de la comida, aunque ya hay un pequeño grupo que ha empezado con su descanso y están apostando jugando a los dados.
+                      \r-!Ey! -te llaman-. ¿Quieres jugar con nosotros?\n
+                      \rNo te apetece unirte a ellos porque no tienes nada que ganar y mucho que perder, pero ves que entre las baratijas que se apuestan unas llaves de una nave monoplaza.\n
+                      \r-Me encantaría, pero no tengo nada que apostar -dices, intentando pensar cómo sacar provecho a la situación.
+                      \r-No importa -te dicen los aliens-. Tienes manos, ¿no?. Muchos querrían tener unas manos tan bonitas como las tuyas.\n
+                      \r¿Qué quieres hacer?\n
+                      \rA)Jugar a los dados.\n
+                      \rB)Retirarte. Es una apuesta demasiado arriesgada""")
+            option = choose_option()
+            if(option == 'A'):
+                self.party_with_aliens()
+            elif(option == 'B'):
+                self.sensate_choice()
     
     # Método para la prueba de la babosa
 
@@ -104,8 +117,6 @@ class Boiler_Room:
             print("""Usas la barra de metal para tratar de cerrar la compuerta, pero es una locura. No tienes guantes, el metal conduce el calor y pronto sientes cómo se te quema la piel.\n
                   \rEl reptiliano te mira con curiosidad. Decides jugarte el todo por el todo""")
             attempts = self.close_the_door()
-            if(int(attempts) == 0):
-                return True
             if(int(attempts) > 1):
                 self.player.add_state('burned')
                 print("""Has cerrado la compuerta y, aunque has sufrido quemaduras y has perdido la barra, podrás seguir adelante. La máscara oculta tus lágrimas de dolor.\n
@@ -124,9 +135,155 @@ class Boiler_Room:
             print("""Los reptilianos, al igual que muchas otras razas de alien de la galaxia, no aceptan un no por respuesta.\n
                   \rSe abalanza sobre ti y tratas de defenderte con la barra de metal, pero esta pelea no es como la de la rata. Ahí estás en inferioridad numérica y pronto te reducen y te ceban a golpes hasta quedar seguros de que has muerto.\n""")
             game_over()
-    
-    # Método para escoger las opciones de items entre la basura
 
+
+    # Método para configurar la opción de no jugar con los aliens
+
+    def sensate_choice(self):
+
+        print("""Decides declinar la oferta, pero ese gesto no le gustó a los aliens. El alcohol parece haber afectado a su raciocinio y, antes de que te des cuenta, te ha rodeado una turba que te zarandea.\n
+              \rDurante ese barullo, se te cae la barra ensangrentada con la que mataste a la rata.\n
+              \r-¿A quién has golpeado con eso? -te preguntan\n.
+              \rEn verdad, no les interesa la respuesta y te golpean con la barra hasta que la sangre que gotea de la barra es tuya.\n
+              \rNo ves nada. No sientes nada\n""")
+        game_over()
+    # Método para configurar las apuestas con los aliens
+    def party_with_aliens(self):
+        print("""-¿Con cuántos dados quieres jugar? ¿Uno o tres?\n
+              \rA)Uno.\n
+              \rB)Tres.\n""")
+        option = choose_option()
+        if(option == 'A'):
+            party = self.party_with_one_dice()
+            if(party == True):
+                print("""El alien te mira con odio. No puede acusarte de nada. Has ganado limpiamente, pero como solo jugastéis con un dado, no puedes llevarte el premio gordo.\n
+                      \r-Toma. Aquí tienes tu premio -te dicen mientras te dan un bláster. Sin duda, es un objeto muy valioso en tu situación.\n""")
+                clear_console()
+                self.player.add_item('bláster')
+                print("""Has ganado un bláster\n""")
+                print("""Llega la hora de la comida y todos se marchan, algunos más enfadados con otros. No obstante, tienes la suerte de ver un almacén donde guardan cápsulas de emergencia para poder huir de la sala de calderas en caso de accidente. Te diriges hacia allí enseguida. La salvación está al alcance de tu mano.\n""")
+                self.next_level()
+            else:
+                print("""Un sudor frío recurre tu espalda mientras ves cómo los aliens se frotan las manis.\n
+                      \r-¿Qué puedes ofrecernos humano?\n
+                      \r. Solo tienes una barra de hierro y a los aliens no les parece suficiente, aunque la cogen y te golpean una mano con ella, rompiéndote los huesos.\n
+                      \r-La próxima vez juega cuando tengas dinero -te aconsejan, con cierta razón.\n""")
+                self.player.add_state('without one hand')
+                print("""Suena la sirena que marca el inicio de la hora de la comida y enseguida te quedas solo. Por suerte para ti, mientras buscas una salida, ves un almacén de cápsulas de escape de emergencia, que debían usarse en caso de accidente en la sala de máquinas.\n
+                      \rQuizás ahí encuentras una salida.""")
+                self.next_level()
+        elif(option == 'B'):
+            party = self.party_with_three_dices()
+            if(party == True):
+                print("""Tus rivales te miran con odio. No se pueden creer tu buena suerte, pero los dados han hablado y no pueden negarse a darte tu premio.\n
+                      \rVes con júbilo cómo te dan las llaves de una nave monoplaza que te puede ayudar a huir de esa prisión horrible.\n""")
+                self.player.add_item("llaves nave")
+                print("""Has recibido llaves de nave monoplaza.\n""")
+                print("""Suena la sirena que marca el inicio del turno de comida. Como tus compañeros de partida no quieren seguir viéndote, te dejan solo y, en un par de minutos, descubres que estás solo en la sala de calderas.\n
+                      Ya solo necesitas encontrar la nave a la que pertenecen esas llaves.""")
+                self.next_level()
+            else:
+                print("""Has perdido la partida. Y como has apostado tan alto, los aliens te van a exigir que les entregues una recompensa a la altura.\n
+                      \r-¿Qué puedes darnos, humano? -te preguntan,.\n
+                      \rSolo tienes una barra de hierro y, para tus contricantes, no es suficiente.\n
+                      \rSuena la sirena de la hora de la comida\r.
+                      \r-Creo que esta vez tendremos un plato más sabroso que el rancho de siempre -dicen los aliens relamiéndose mientras clavan sus ojos en ti.\n
+                      \rTratas de huir, pero te arrinconan enseguida. Tras golpearte con la barra de hierra, sientes cómo tu cuerpo se desgarra entre el ataque de garras y colmillos.""")
+                game_over()
+
+    # Partida con alirnd von un solo dado
+    def party_with_one_dice(self):
+        score_alien = 0
+        your_score = 0
+        while score_alien < 3 and your_score < 3:
+            clear_console()
+            dice = randrange(1, 7);
+            print("Tu puntuación es: {}\n".format(your_score))
+            print("La puntuación del alien es: {}\n".format(score_alien))
+            alien_bet = randrange(1,7)
+            try:
+                your_bet = input("""-Di un número -te dice el alien-. Quien se aproxime más al número es el ganador. Jugamos al mejor de tres.\n
+                                 \r""")
+                if(int(your_bet) < 1 or int(your_bet) > 6):
+                    print("Recuerda que un lado tiene seis caras\n")
+                    your_bet = input('Pulsa cualquier tecla para reanudar la pártida')
+                else:
+                    print("Tu apuesta es {}\n".format(your_bet))
+                    print("La apuesta del alien es {}\n".format(alien_bet))
+                    input('Pulsa cualquier tecla para ver la puntuación del dado')
+                    print("La puntuación del dado es: {}".format(dice))
+                    value_dice = int(dice)
+                    value_bet_alien = int(alien_bet)
+                    value_your_bet = int(your_bet)
+                    point_alien = self.calculate_score(value_dice, value_bet_alien)
+                    your_point = self.calculate_score(value_dice, value_your_bet )
+                    if(point_alien > your_point):
+                        your_score = your_score  + 1
+                    elif(your_point > point_alien):
+                        score_alien = score_alien + 1
+                    elif(your_point == point_alien):
+                        your_score = your_score
+                        score_alien = score_alien
+            except:
+                print("Recuerda que un lado tiene seis caras\n")
+                your_bet = input('Tira de nuevo')
+        if(your_score == 3):
+            return True
+        elif(score_alien == 3):
+            return False
+        
+    # Método para calcular la puntuación con un dado.
+
+    def calculate_score(self, value_dice, value_player): 
+        point_player = None
+        if(value_player > value_dice):
+            point_player = value_player - value_dice
+        else:
+            point_player = value_dice - value_player 
+        return point_player
+    
+    #Método para configurar la partida con tres dados
+    def party_with_three_dices(self):
+        print("""-Vamos a jugar con todo -dice el alien-. Jugaremos al mejor de cinco y hay que adivinar la puntuación de los tres dados.\n""")
+        score_alien = 0
+        your_score = 0
+        while score_alien < 5 and your_score < 5:
+            dices = randrange(3, 19)
+            print("Tu puntuación es: {}\n".format(your_score))
+            print("La puntuación del alien es: {}\n".format(score_alien))
+            alien_bet = randrange(3, 19)
+            your_bet = input("""¿Qué puntuación mostrarán los dados?:\n
+                             \r""")
+            if(int(your_bet) < 3 or int(your_bet) > 18):
+                print("Los dados solo pueden dar una puntuación entre tres y dieciocho\n")
+                input('Pulsa cualquier tecla para reanudar la pártida')
+            else:
+                self.play(dices, your_bet, alien_bet)
+        if(your_score == 5):
+            return True
+        elif(score_alien == 5):
+            return False
+        
+    def play(self, dices, your_bet, alien_bet):
+        print("Tu apuesta es {}\n".format(your_bet))
+        print("La apuesta del alien es {}\n".format(alien_bet))
+        input('Pulsa cualquier tecla para ver la puntuación del dado')
+        print("La puntuación del dado es: {}".format(dices))
+        value_dices = int(dices)
+        value_bet_alien = int(alien_bet)
+        value_your_bet = int(your_bet)
+        point_alien = self.calculate_score(value_dices, value_bet_alien)
+        your_point = self.calculate_score(value_dices, value_your_bet )
+        if(point_alien > your_point):
+            your_score = your_score  + 1
+        elif(your_point > point_alien):
+            score_alien = score_alien + 1
+        elif(your_point == point_alien):
+            your_score = your_score
+            score_alien = score_alien
+    # Método para escoger las opciones de items entre la basura
+    def sensate_choice(self):
+        return True
     def choices_with_trash(self):
         option = choose_option()
         if(option == 'A'):
